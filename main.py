@@ -100,8 +100,7 @@ def instantiate_tape():
 
 
 def length_format_check(length):
-    numbers = [i for i in range(10)]
-    for n, character in length:
+    for n, character in enumerate(length):
         if character == ":":
             minute_digits = n + 1
     # if the format does not fit format M:SS return 1 (indicating failure)
