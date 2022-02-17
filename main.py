@@ -100,9 +100,13 @@ def instantiate_tape():
 
 
 def length_format_check(length):
+    if ":" not in length:
+        print("Invalid, no colon found.")
+        return 1
     for n, character in enumerate(length):
         if character == ":":
             minute_digits = n + 1
+            break
     # if the format does not fit format M:SS return 1 (indicating failure)
     try:
         int(length[:minute_digits])
@@ -110,13 +114,8 @@ def length_format_check(length):
         digit = int(length[-2])  # tests for impropper formatting
         if digit > 5:
             raise ValueError
-        if ":" not in length:
-            raise RuntimeError
     except ValueError:
         print("Invalid, did you make a typo?")
-        return 1
-    except RuntimeError:
-        print("Invalid, no colon found.")
         return 1
     return 0
 
