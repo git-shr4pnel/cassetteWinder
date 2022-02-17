@@ -102,7 +102,7 @@ def instantiate_tape():
 def length_format_check(length):
     numbers = [i for i in range(10)]
     # if the format does not fit format M:SS return 1 (indicating failure)
-    if not any((length in numbers, ":" in length, length[-1] in numbers, length[-2] in numbers)):
+    if any((length not in numbers, ":" not in length, length[-1] not in numbers, length[-2] not in numbers)):
         return 1
     return 0
 
