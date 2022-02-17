@@ -110,11 +110,8 @@ def length_format_check(length):
     # if the format does not fit format M:SS return 1 (indicating failure)
     try:
         int(length[minute_digits:])
-        print("success 113")
         int(length[-1])
-        print("success 115")
         digit = int(length[-2])  # tests for impropper formatting
-        print("117")
         if digit > 5:
             raise ValueError
     except ValueError:
