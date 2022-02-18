@@ -41,8 +41,8 @@ class Tape:
         self.tracks.append(new_song)
         with open(f"tapes/{self.name}.txt", "a") as f_a:
             f_a.write(str(new_song))
-        self.time_elapsed += new_song.length / 1000
-        print(f"{round(self.time_elapsed/60)}/{self.length//2} minutes passed")
+        self.time_elapsed += new_song.length
+        print(f"{display_time(self.time_elapsed)}/{self.length//2} minutes passed")
         return 0
 
 
@@ -57,9 +57,9 @@ class Song:
 
 
 def display_time(length):
-    minutes = length // 60
-    seconds = length % 60
-    return f"{minutes}:{seconds}"
+    minutes = length / 1000 // 60
+    seconds = length / 1000 % 60
+    return f"{int(minutes)}:{round(seconds)}"
 
 
 def dir_check(tape):
@@ -135,7 +135,10 @@ def find_songs(sp):
                     print("Retrying...")
                     i += 5
                     raise RuntimeError
-                return item["name"], item["duration_ms"]
+                return \
+                    results["tracks"]["items"][num_query-1]["name"], \
+                    results["tracks"]["items"][num_query-1]["duration_ms"], \
+                    results["tracks"]["items"][num_query-1]["artists"][0]["name"]
             except ValueError:
                 break
             except RuntimeError:
@@ -159,8 +162,7 @@ def tracklist(tape):
 
 
 def main():
-    # tape = instantiate_tape()
-    tape = Tape(60, "test")
+    tape = instantiate_tape()
     tracklist(tape)
 
 
