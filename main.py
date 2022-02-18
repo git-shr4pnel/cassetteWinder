@@ -1,5 +1,7 @@
 from os.path import exists
 from os import mkdir
+import spotipy
+from spotipy.oauth2 import SpotifyOAuth
 
 
 class Tape:
@@ -15,7 +17,7 @@ class Tape:
 
     def add(self, track_name, track_minutes, track_artist):
         new_song = Song(track_name, track_minutes, track_artist)
-        if new_song.secs_convert() + self.time_elapsed > self.length/2*60-300:
+        if new_song.length / 1000 + self.time_elapsed > self.length/2*60-300:
             if self.side == 0:
                 query = input(f"Close to the end of side A. Flip cassette? [y/n]\n$ ").lower()
                 if query not in {"y", "n"}:
@@ -39,8 +41,8 @@ class Tape:
         self.tracks.append(new_song)
         with open(f"tapes/{self.name}.txt", "a") as f_a:
             f_a.write(str(new_song))
-        self.time_elapsed += new_song.secs_convert()
-        print(f"{round(self.time_elapsed/60)}/{self.length//2} minutes passed")
+        self.time_elapsed += new_song.length
+        print(f"{display_time(self.time_elapsed)}/{self.length//2} minutes passed")
         return 0
 
 
@@ -51,16 +53,13 @@ class Song:
         self.artist = artist
 
     def __str__(self):
-        return f"{self.name}, {self.artist}, {self.length}\n"
+        return f"{self.name}, {self.artist}, {display_time(self.length)}\n"
 
-    def secs_convert(self):
-        for n, character in enumerate(self.length):
-            if character == ":":
-                minute_digits = n
-                break
-        # this return statement is getting slices of the numbers before and after the colon and turning it all into
-        # seconds. It does this by counting how many loops are needed to get to the divider between mins & secs
-        return int(self.length[:minute_digits])*60 + int(self.length[minute_digits + 1:])
+
+def display_time(length):
+    minutes = length / 1000 // 60
+    seconds = length / 1000 % 60
+    return f"{int(minutes)}:{round(seconds)}"
 
 
 def dir_check(tape):
@@ -115,15 +114,45 @@ def length_format_check(length):
     return 0
 
 
+def find_songs(sp):
+    i = 0
+    while 1:
+        query = input("What's the name of your song?\n$ ")
+        while 1:
+            try:
+                results, n = sp.search(q=query, limit=5, offset=i), 0
+                for n, item in enumerate(results["tracks"]["items"]):
+                    print(f"[{n + 1}] {item['name']}: {item['album']['name']} by {item['artists'][0]['name']}")
+                if n == 0:
+                    print("No results found.")
+                    break
+                num_query = int(input("Which one of these songs match your query? For more results, enter 0. "
+                                      "To search again enter nothing.\n$ "))
+                if num_query > n+1 or num_query < 0:
+                    print("Invalid. Please try again.")
+                    raise ValueError
+                if num_query == 0:
+                    print("Retrying...")
+                    i += 5
+                    raise RuntimeError
+                return \
+                    results["tracks"]["items"][num_query-1]["name"], \
+                    results["tracks"]["items"][num_query-1]["duration_ms"], \
+                    results["tracks"]["items"][num_query-1]["artists"][0]["name"]
+            except ValueError:
+                break
+            except RuntimeError:
+                continue
+            except spotipy.exceptions.SpotifyException:
+                print("Invalid search, try again.")
+                break
+
+
 def tracklist(tape):
+    sp = spotipy.Spotify(auth_manager=SpotifyOAuth())
     while 1:
         try:
-            name = input("What's the name of your song?\n$ ")
-            length = input("How long is the song? (format M:SS, i.e 2:33)\n$ ")
-            failure = length_format_check(length)
-            if failure:
-                raise RuntimeError
-            artist = input("What's the name of the artist?\n$ ")
+            name, length, artist = find_songs(sp)
             done = tape.add(name, length, artist)
             if done:
                 break
