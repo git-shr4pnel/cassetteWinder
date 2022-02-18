@@ -1,5 +1,9 @@
 from os.path import exists
 from os import mkdir
+import requests.exceptions
+import spotipy
+from spotipy.oauth2 import SpotifyOAuth
+from spotipy.exceptions import SpotifyException
 
 
 class Tape:
@@ -115,15 +119,40 @@ def length_format_check(length):
     return 0
 
 
+def find_songs(sp):
+    i = 0
+    while 1:
+        query = input("What's the name of your song?\n$ ")
+        while 1:
+            try:
+                results = sp.search(q=query, limit=5, offset=i)
+                for n, item in enumerate(results["tracks"]["items"]):
+                    print(f"[{n + 1}] {item['name']}: {item['album']['name']}")
+                num_query = int(input("Which one of these songs match your query? If none, enter 0.\n$ "))
+                if num_query > n or num_query < 0:
+                    print("Invalid. Please try again.")
+                    raise ValueError
+                if num_query == 0:
+                    print("Retrying...")
+                    i += 5
+                    raise RuntimeError
+            except ValueError:
+                break
+            except RuntimeError:
+                continue
+            except spotipy.exceptions.SpotifyException:
+                print("Invalid search, try again.")
+                break
+    return None, None, None
+
+
 def tracklist(tape):
+    sp = spotipy.Spotify(auth_manager=SpotifyOAuth())
     while 1:
         try:
-            name = input("What's the name of your song?\n$ ")
-            length = input("How long is the song? (format M:SS, i.e 2:33)\n$ ")
-            failure = length_format_check(length)
-            if failure:
-                raise RuntimeError
-            artist = input("What's the name of the artist?\n$ ")
+            # todo spotify integration
+            name, length, artist = find_songs(sp)
+            return
             done = tape.add(name, length, artist)
             if done:
                 break
@@ -133,7 +162,8 @@ def tracklist(tape):
 
 
 def main():
-    tape = instantiate_tape()
+    #tape = instantiate_tape()
+    tape = Tape(60, "test")
     tracklist(tape)
 
 
