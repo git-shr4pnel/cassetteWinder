@@ -39,7 +39,7 @@ class Tape:
                         f_a.write("\n\nEND")
                 return 1
         self.tracks.append(new_song)
-        with open(f"tapes/{self.name}.txt", "a") as f_a:
+        with open(f"tapes/{self.name}.txt", "a", encoding="utf-8") as f_a:
             f_a.write(str(new_song))
         self.time_elapsed += new_song.length
         print(f"{display_time(self.time_elapsed)}/{self.length//2} minutes passed")
