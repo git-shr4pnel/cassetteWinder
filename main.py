@@ -123,9 +123,10 @@ def find_songs(sp):
                 results, n = sp.search(q=query, limit=5, offset=i), 0
                 for n, item in enumerate(results["tracks"]["items"]):
                     print(f"[{n + 1}] {item['name']}: {item['album']['name']} by {item['artists'][0]['name']}")
-                if n == 0:
+
+                if item is None:
                     print("No results found.")
-                    break
+                    raise ValueError
                 num_query = int(input("Which one of these songs match your query? For more results, enter 0. "
                                       "To search again enter nothing.\n$ "))
                 if num_query > n+1 or num_query < 0:
