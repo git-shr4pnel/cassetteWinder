@@ -29,7 +29,7 @@ class Tape:
                     return 0
             else:
                 query = input(f"Close to the end of side B. Finalize tracklist? [y/n]\n$ ").lower()
-                if query not in {"y", "n"}:
+                if query not in {"y", "n"}: #
                     query = "y"
                 if query == "y":
                     print("DONE")
