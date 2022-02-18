@@ -15,12 +15,9 @@ class Tape:
 
     def add(self, track_name, track_minutes, track_artist):
         new_song = Song(track_name, track_minutes, track_artist)
-        if new_song.secs_convert() + self.time_elapsed > self.length/2*60:
-
+        if new_song.secs_convert() + self.time_elapsed > self.length/2*60-300:
             if self.side == 0:
-                query = input(f"The song is too long to fit on this side! You only have "
-                              f"{round(self.length/2-self.time_elapsed)} "
-                              f"minutes left. Flip side? [y/n]\n$ ").lower()
+                query = input(f"Close to the end of side A. Flip cassette? [y/n]\n$ ").lower()
                 if query not in {"y", "n"}:
                     query = "y"
                 if query == "y":
@@ -31,9 +28,7 @@ class Tape:
                     self.side = 1
                     return 0
             else:
-                query = input(f"The song is too long to fit on this side! You only have "
-                              f"{round(self.length/2-self.time_elapsed)} minutes left. "
-                              f"Finalise tracklist? [y/n]\n$ ").lower()
+                query = input(f"Close to the end of side B. Finalize tracklist? [y/n]\n$ ").lower()
                 if query not in {"y", "n"}:
                     query = "y"
                 if query == "y":
