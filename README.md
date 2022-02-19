@@ -6,4 +6,4 @@ This is a utility for my hobby of recording cassettes. Counting the minutes and 
 
 ## Usage
 
-Simply run main.py. On linux, this program will need superuser permissions in order to create files. The loop will run you through the whole process.
+Simply run main.py. On linux, this program will need superuser permissions in order to create files. The loop will run you through the whole process. A spotify account will be needed. Log in at https://developer.spotify.com and create a new application. Thus, write your client ID, client secret and callback id (which ideally is http://localhost:8080/callback) in credentials.py.
