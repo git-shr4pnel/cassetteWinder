@@ -157,7 +157,7 @@ def find_songs(sp):
 def tracklist(tape):
     environ["SPOTIPY_CLIENT_ID"] = credentials.SPOTIPY_CLIENT_ID
     environ["SPOTIPY_CLIENT_SECRET"] = credentials.SPOTIPY_CLIENT_SECRET
-    environ["SPOTIPY_CALLBACK_URI"] = credentials.SPOTIPY_CALLBACK_URI
+    environ["SPOTIPY_REDIRECT_URI"] = credentials.SPOTIPY_REDIRECT_URI
     sp = spotipy.Spotify(auth_manager=SpotifyOAuth())
     while 1:
         try:
@@ -172,7 +172,11 @@ def tracklist(tape):
 
 def main():
     tape = instantiate_tape()
-    tracklist(tape)
+    try:
+        tracklist(tape)
+    except Exception as e:
+        print(e)
+        input()
 
 
 if __name__ == "__main__":
