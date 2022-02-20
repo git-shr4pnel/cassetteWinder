@@ -1,7 +1,11 @@
 from os.path import exists
-from os import mkdir
+from os import mkdir, environ
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
+try:
+    import credentials
+except SyntaxError:
+    raise RuntimeError("Set your spotify credentials in credentials.py")
 
 
 class Tape:
@@ -150,6 +154,9 @@ def find_songs(sp):
 
 
 def tracklist(tape):
+    environ["SPOTIPY_CLIENT_ID"] = credentials.SPOTIPY_CLIENT_ID
+    environ["SPOTIPY_CLIENT_SECRET"] = credentials.SPOTIPY_CLIENT_SECRET
+    environ["SPOTIPY_CALLBACK_URI"] = credentials.SPOTIPY_CALLBACK_URI
     sp = spotipy.Spotify(auth_manager=SpotifyOAuth())
     while 1:
         try:
