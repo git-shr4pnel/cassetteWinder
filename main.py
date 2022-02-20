@@ -21,7 +21,9 @@ class Tape:
 
     def add(self, track_name, track_minutes, track_artist):
         new_song = Song(track_name, track_minutes, track_artist)
-        if new_song.length / 1000 + self.time_elapsed > self.length/2*60-300:
+        print(f"{display_time(new_song.length+self.time_elapsed)}/{self.length // 2} minutes passed")
+        # time represented in ms
+        if new_song.length + self.time_elapsed > int(self.length/2*6000 - self.length/2*6000*0.2)*10:
             if self.side == 0:
                 query = input(f"Close to the end of side A. Flip cassette? [y/n]\n$ ").lower()
                 if query not in {"y", "n"}:
@@ -41,12 +43,11 @@ class Tape:
                     print("DONE")
                     with open(f"tapes/{self.name}.txt", "a") as f_a:
                         f_a.write("\n\nEND")
-                return 1
+                    return 1
         self.tracks.append(new_song)
         with open(f"tapes/{self.name}.txt", "a", encoding="utf-8") as f_a:
             f_a.write(str(new_song))
         self.time_elapsed += new_song.length
-        print(f"{display_time(self.time_elapsed)}/{self.length//2} minutes passed")
         return 0
 
 
