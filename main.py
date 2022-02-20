@@ -43,6 +43,7 @@ class Tape:
                     print("DONE")
                     with open(f"tapes/{self.name}.txt", "a") as f_a:
                         f_a.write("\n\nEND")
+                    input()
                     return 1
         self.tracks.append(new_song)
         with open(f"tapes/{self.name}.txt", "a", encoding="utf-8") as f_a:
@@ -172,11 +173,7 @@ def tracklist(tape):
 
 def main():
     tape = instantiate_tape()
-    try:
-        tracklist(tape)
-    except Exception as e:
-        print(e)
-        input()
+    tracklist(tape)
 
 
 if __name__ == "__main__":
